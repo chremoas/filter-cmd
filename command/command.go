@@ -52,7 +52,7 @@ func (c *Command) Exec(ctx context.Context, req *proto.ExecRequest, rsp *proto.E
 
 func addFilter(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) < 4 {
-		return common.SendError("Usage: !role filter_add <filter_name> <filter_description>")
+		return common.SendError("Usage: !filter filter_add <filter_name> <filter_description>")
 	}
 
 	return role.AddFilter(ctx, req.Sender, req.Args[2], strings.Join(req.Args[3:], " "))
@@ -63,8 +63,14 @@ func listFilters(ctx context.Context, req *proto.ExecRequest) string {
 }
 
 func removeFilter(ctx context.Context, req *proto.ExecRequest) string {
-	if len(req.Args) != 3 {
-		return common.SendError("Usage: !role filter_remove <filter_name>")
+	if len(req.Args) < 3 {
+		return common.SendError("Usage: !filter filter_remove <filter_name> force")
+	}
+
+	if len(req.Args) > 3 {
+		if req.Args[3] == "force" {
+			role.RemoveAllMembers(ctx, req.Args[2])
+		}
 	}
 
 	return role.RemoveFilter(ctx, req.Sender, req.Args[2])
@@ -72,7 +78,7 @@ func removeFilter(ctx context.Context, req *proto.ExecRequest) string {
 
 func listMembers(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) != 3 {
-		return common.SendError("Usage: !role member_list <filter_name>")
+		return common.SendError("Usage: !filter member_list <filter_name>")
 	}
 
 	return role.ListMembers(ctx, req.Args[2])
@@ -80,7 +86,7 @@ func listMembers(ctx context.Context, req *proto.ExecRequest) string {
 
 func addMember(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) < 4 {
-		return common.SendError("Usage: !role member_add <user> <filter>")
+		return common.SendError("Usage: !filter member_add <user> <filter>")
 	}
 
 	tmp := req.Args[2]
@@ -91,7 +97,7 @@ func addMember(ctx context.Context, req *proto.ExecRequest) string {
 
 func removeMember(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) < 4 {
-		return common.SendError("Usage: !role remove_member <user> <filter>")
+		return common.SendError("Usage: !filter remove_member <user> <filter>")
 	}
 
 	tmp := req.Args[2]
