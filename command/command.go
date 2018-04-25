@@ -35,12 +35,12 @@ func (c *Command) Help(ctx context.Context, req *proto.HelpRequest, rsp *proto.H
 func (c *Command) Exec(ctx context.Context, req *proto.ExecRequest, rsp *proto.ExecResponse) error {
 	cmd := args.NewArg(cmdName)
 	cmd.Add("list", &args.Command{listFilters, "List all Filters"})
-	cmd.Add("add", &args.Command{addFilter, "Add Filter"})
-	cmd.Add("remove", &args.Command{removeFilter, "Delete Filter"})
-	cmd.Add("mlist", &args.Command{listMembers, "List all Filter Members"})
-	cmd.Add("madd", &args.Command{addMember, "Add Filter Member"})
-	cmd.Add("mremove", &args.Command{removeMember, "Remove Filter Member"})
-	cmd.Add("msync", &args.Command{syncMembers, "Sync Filter Membership"})
+	cmd.Add("create", &args.Command{addFilter, "Add Filter"})
+	cmd.Add("destroy", &args.Command{removeFilter, "Delete Filter"})
+	cmd.Add("add", &args.Command{addMember, "Add Filter Member"})
+	cmd.Add("remove", &args.Command{removeMember, "Remove Filter Member"})
+	cmd.Add("list_members", &args.Command{listMembers, "List all Filter Members"})
+	cmd.Add("sync", &args.Command{syncMembers, "Sync Filter Membership"})
 	err := cmd.Exec(ctx, req, rsp)
 
 	// I don't 100% love this, but it'll do for now. -brian
