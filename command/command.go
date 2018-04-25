@@ -52,10 +52,20 @@ func (c *Command) Exec(ctx context.Context, req *proto.ExecRequest, rsp *proto.E
 
 func addFilter(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) < 4 {
-		return common.SendError("Usage: !filter filter_add <filter_name> <filter_description>")
+		return common.SendError("Usage: !filter create <filter_name> <filter_description>")
 	}
 
-	return role.AddFilter(ctx, req.Sender, req.Args[2], strings.Join(req.Args[3:], " "))
+	description := strings.Join(req.Args[3:], " ")
+
+	if common.IsDiscordUser(req.Args[2]) {
+		return common.SendError("Discord users may not be filters")
+	}
+
+	if common.IsDiscordUser(description) {
+		return common.SendError("Discord users may not be descriptions")
+	}
+
+	return role.AddFilter(ctx, req.Sender, req.Args[2], description)
 }
 
 func listFilters(ctx context.Context, req *proto.ExecRequest) string {
@@ -64,7 +74,7 @@ func listFilters(ctx context.Context, req *proto.ExecRequest) string {
 
 func removeFilter(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) < 3 {
-		return common.SendError("Usage: !filter filter_remove <filter_name> force")
+		return common.SendError("Usage: !filter destroy <filter_name> force")
 	}
 
 	if len(req.Args) > 3 {
@@ -78,7 +88,7 @@ func removeFilter(ctx context.Context, req *proto.ExecRequest) string {
 
 func listMembers(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) != 3 {
-		return common.SendError("Usage: !filter member_list <filter_name>")
+		return common.SendError("Usage: !filter list_members <filter_name>")
 	}
 
 	return role.ListMembers(ctx, req.Args[2])
@@ -86,7 +96,7 @@ func listMembers(ctx context.Context, req *proto.ExecRequest) string {
 
 func addMember(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) < 4 {
-		return common.SendError("Usage: !filter member_add <user> <filter>")
+		return common.SendError("Usage: !filter add <user> <filter>")
 	}
 
 	tmp := req.Args[2]
@@ -97,7 +107,7 @@ func addMember(ctx context.Context, req *proto.ExecRequest) string {
 
 func removeMember(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) < 4 {
-		return common.SendError("Usage: !filter remove_member <user> <filter>")
+		return common.SendError("Usage: !filter remove <user> <filter>")
 	}
 
 	tmp := req.Args[2]
