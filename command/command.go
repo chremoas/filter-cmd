@@ -79,7 +79,7 @@ func removeFilter(ctx context.Context, req *proto.ExecRequest) string {
 
 	if len(req.Args) > 3 {
 		if req.Args[3] == "force" {
-			role.RemoveAllMembers(ctx, req.Args[2])
+			role.RemoveAllMembers(ctx, req.Args[2], req.Sender)
 		}
 	}
 
@@ -117,7 +117,7 @@ func removeMember(ctx context.Context, req *proto.ExecRequest) string {
 }
 
 func syncMembers(ctx context.Context, req *proto.ExecRequest) string {
-	return role.SyncMembers(ctx)
+	return role.SyncMembers(ctx, req.Sender)
 }
 
 func NewCommand(name string, factory ClientFactory) *Command {
