@@ -55,6 +55,15 @@ func addFilter(ctx context.Context, req *proto.ExecRequest) string {
 		return common.SendError("Usage: !filter create <filter_name> <filter_description>")
 	}
 
+	canPerform, err := role.Permissions.CanPerform(ctx, req.Sender)
+	if err != nil {
+		return common.SendFatal(err.Error())
+	}
+
+	if !canPerform {
+		return common.SendError("User doesn't have permission to this command")
+	}
+
 	description := strings.Join(req.Args[3:], " ")
 
 	if common.IsDiscordUser(req.Args[2]) {
@@ -75,6 +84,15 @@ func listFilters(ctx context.Context, req *proto.ExecRequest) string {
 func removeFilter(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) < 3 {
 		return common.SendError("Usage: !filter destroy <filter_name> force")
+	}
+
+	canPerform, err := role.Permissions.CanPerform(ctx, req.Sender)
+	if err != nil {
+		return common.SendFatal(err.Error())
+	}
+
+	if !canPerform {
+		return common.SendError("User doesn't have permission to this command")
 	}
 
 	if len(req.Args) > 3 {
@@ -99,6 +117,15 @@ func addMember(ctx context.Context, req *proto.ExecRequest) string {
 		return common.SendError("Usage: !filter add <user> <filter>")
 	}
 
+	canPerform, err := role.Permissions.CanPerform(ctx, req.Sender)
+	if err != nil {
+		return common.SendFatal(err.Error())
+	}
+
+	if !canPerform {
+		return common.SendError("User doesn't have permission to this command")
+	}
+
 	tmp := req.Args[2]
 	user := tmp[2 : len(tmp)-1]
 
@@ -108,6 +135,15 @@ func addMember(ctx context.Context, req *proto.ExecRequest) string {
 func removeMember(ctx context.Context, req *proto.ExecRequest) string {
 	if len(req.Args) < 4 {
 		return common.SendError("Usage: !filter remove <user> <filter>")
+	}
+
+	canPerform, err := role.Permissions.CanPerform(ctx, req.Sender)
+	if err != nil {
+		return common.SendFatal(err.Error())
+	}
+
+	if !canPerform {
+		return common.SendError("User doesn't have permission to this command")
 	}
 
 	tmp := req.Args[2]
