@@ -126,8 +126,7 @@ func addMember(ctx context.Context, req *proto.ExecRequest) string {
 		return common.SendError("User doesn't have permission to this command")
 	}
 
-	tmp := req.Args[2]
-	user := tmp[2 : len(tmp)-1]
+	user := common.ExtractUserId(req.Args[2])
 
 	return role.AddMember(ctx, req.Sender, user, req.Args[3])
 }
@@ -146,8 +145,7 @@ func removeMember(ctx context.Context, req *proto.ExecRequest) string {
 		return common.SendError("User doesn't have permission to this command")
 	}
 
-	tmp := req.Args[2]
-	user := tmp[2 : len(tmp)-1]
+	user := common.ExtractUserId(req.Args[2])
 
 	return role.RemoveMember(ctx, req.Sender, user, req.Args[3])
 }
