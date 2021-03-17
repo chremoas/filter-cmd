@@ -2,20 +2,40 @@ package main
 
 import (
 	"fmt"
+
 	proto "github.com/chremoas/chremoas/proto"
-	"github.com/chremoas/filter-cmd/command"
-	rolesrv "github.com/chremoas/role-srv/proto"
 	permsrv "github.com/chremoas/perms-srv/proto"
+	rolesrv "github.com/chremoas/role-srv/proto"
 	"github.com/chremoas/services-common/config"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/client"
+	"go.uber.org/zap"
+
+	chremoasPrometheus "github.com/chremoas/services-common/prometheus"
+
+	"github.com/chremoas/filter-cmd/command"
 )
 
-var Version = "SET ME YOU KNOB"
-var service micro.Service
-var name = "filter"
+var (
+	Version = "SET ME YOU KNOB"
+	service micro.Service
+	name    = "filter"
+	logger  *zap.Logger
+)
 
 func main() {
+	var err error
+
+	// TODO pick stuff up from the config
+	logger, err = zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
+	logger.Info("Initialized logger")
+
+	go chremoasPrometheus.PrometheusExporter(logger)
+
 	service = config.NewService(Version, "cmd", name, initialize)
 
 	if err := service.Run(); err != nil {
