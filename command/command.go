@@ -1,15 +1,16 @@
 package command
 
 import (
+	"strings"
+
+	"github.com/chremoas/chremoas/args"
 	proto "github.com/chremoas/chremoas/proto"
 	pclient "github.com/chremoas/perms-srv/client"
 	permsrv "github.com/chremoas/perms-srv/proto"
 	rclient "github.com/chremoas/role-srv/client"
 	rolesrv "github.com/chremoas/role-srv/proto"
-	"github.com/chremoas/chremoas/args"
 	common "github.com/chremoas/services-common/command"
 	"golang.org/x/net/context"
-	"strings"
 )
 
 type ClientFactory interface {
@@ -96,11 +97,12 @@ func removeFilter(ctx context.Context, req *proto.ExecRequest) string {
 		return common.SendError("User doesn't have permission to this command")
 	}
 
-	if len(req.Args) > 3 {
-		if req.Args[3] == "force" {
-			role.RemoveAllMembers(ctx, req.Args[2], req.Sender)
-		}
-	}
+	// This needs to be passed to role-srv if we continue to use microservices
+	//if len(req.Args) > 3 {
+	//	if req.Args[3] == "force" {
+	//		role.RemoveAllMembers(ctx, req.Args[2], req.Sender)
+	//	}
+	//}
 
 	return role.RemoveFilter(ctx, req.Sender, req.Args[2])
 }

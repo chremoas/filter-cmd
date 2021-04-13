@@ -36,7 +36,13 @@ func (r Roles) AddFilter(ctx context.Context, sender, filterName, filterDescript
 }
 
 func (r Roles) ListFilters(ctx context.Context) string {
-	var buffer bytes.Buffer
+	var (
+		buffer bytes.Buffer
+		sugar  = r.Logger.Sugar()
+	)
+
+	sugar.Info("Entering ListFilters")
+	defer sugar.Info("Exiting ListFilters")
 	filters, err := r.RoleClient.GetFilters(ctx, &rolesrv.NilMessage{})
 
 	if err != nil {
@@ -164,7 +170,6 @@ func (r Roles) RemoveMember(ctx context.Context, sender, user, filter string) st
 
 	return common.SendSuccess(fmt.Sprintf("Removed '%s' from '%s'\n", user, filter))
 }
-
 
 func (r Roles) SyncMembers(ctx context.Context, sender string) string {
 	//var buffer bytes.Buffer
